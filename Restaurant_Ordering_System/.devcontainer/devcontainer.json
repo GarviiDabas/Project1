@@ -1,0 +1,9 @@
+{
+  "name": "Java 24 Environment",
+  "image": "mcr.microsoft.com/devcontainers/java:latest",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "24"
+    }
+  }
+}
