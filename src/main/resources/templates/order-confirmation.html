@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+        .links {
+            margin-top: 2rem;
+        }
+        .links a {
+            margin-right: 1rem;
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Thank you, <span th:text="${order.customerName}">Customer</span>! 🎉</h2>
+    <p>Your order has been placed successfully on <span th:text="${order.timestamp}">time</span>.</p>
+
+    <h3>Ordered Items:</h3>
+    <ul>
+        <li th:each="item : ${order.menuItems}">
+            <span th:text="${item.name}">Item Name</span> - ₹<span th:text="${item.price}">0.0</span>
+        </li>
+    </ul>
+
+    <p class="total">Total: ₹<span th:text="${order.totalPrice}">0.0</span></p>
+
+    <div class="links">
+        <a href="/menu">← Back to Menu</a>
+        <a href="/orders">📄 View All Orders</a>
+    </div>
+
+</body>
+</html>

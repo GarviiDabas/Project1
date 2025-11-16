@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Placed</title>
+</head>
+<body>
+
+<h1>✅ Order Placed Successfully!</h1>
+
+<p>Order ID: <strong th:text="${order.id}"></strong></p>
+<p>Total Price: ₹<strong th:text="${order.totalPrice}"></strong></p>
+
+<h3>Items:</h3>
+<ul>
+    <li th:each="item : ${order.menuItems}" th:text="${item.name} + ' - ₹' + ${item.price}"></li>
+</ul>
+
+</body>
+</html>

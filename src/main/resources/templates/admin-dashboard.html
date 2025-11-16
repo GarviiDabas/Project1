@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+            background: #f7f7f7;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        .stats-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        canvas {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .left-links ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: #fff;
+            background-color: #4CAF50;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #45a049;
+        }
+
+        .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-button {
+            background-color: #e74c3c;
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Tabs */
+        .tab-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .tab-button.active {
+            background-color: #28a745;
+        }
+
+        .tab-button:hover {
+            background-color: #0056b3;
+        }
+
+        .sales-tab {
+            margin-top: 20px;
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ✅ Navbar -->
+<nav class="navbar">
+    <div class="left-links">
+        <ul>
+            <li><a class="nav-link" th:href="@{/menu}">🏠 Home</a></li>
+        </ul>
+    </div>
+    <div class="right-actions">
+        <span>👋 Welcome, Admin!</span>
+        <form th:action="@{/logout}" method="post">
+            <button class="logout-button" type="submit">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<!-- ✅ Heading -->
+<h1>📊 Reports and Stats</h1>
+
+
+<!-- ✅ Total Stats -->
+<div class="stats-box">
+    <h3>Total Orders: <span th:text="${totalOrders}">0</span></h3>
+    <h3>Total Revenue: ₹<span th:text="${totalRevenue}">0.0</span></h3>
+</div>
+
+<!-- ✅ Sales Reports Tabs & Tables -->
+<div class="stats-box">
+    <h2>📋 Sales Reports</h2>
+    <div>
+        <button onclick="showTab('daily')" class="tab-button">Daily</button>
+        <button onclick="showTab('weekly')" class="tab-button">Weekly</button>
+        <button onclick="showTab('monthly')" class="tab-button">Monthly</button>
+    </div>
+
+    <!-- DAILY SALES TABLE -->
+    <div id="daily" class="sales-tab">
+        <h3>📅 Daily Sales</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Order Count</th>
+                    <th>Total Revenue (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sale : ${dailySales}">
+                    <td th:text="${sale.dateLabelFormatted}"></td>
+                    <td th:text="${sale.orderCount}"></td>
+                    <td th:text="${sale.totalRevenue}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- WEEKLY SALES TABLE -->
+    <div id="weekly" class="sales-tab" style="display:none;">
+        <h3>🗓️ Weekly Sales</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Week</th>
+                    <th>Order Count</th>
+                    <th>Total Revenue (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sale : ${weeklySales}">
+                    <td th:text="${sale.weekLabel}"></td>
+                    <td th:text="${sale.orderCount}"></td>
+                    <td th:text="${sale.totalRevenue}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- MONTHLY SALES TABLE -->
+    <div id="monthly" class="sales-tab" style="display:none;">
+        <h3>📆 Monthly Sales</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Order Count</th>
+                    <th>Total Revenue (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sale : ${monthlySales}">
+                    <td th:text="${sale.monthLabel}"></td>
+                    <td th:text="${sale.orderCount}"></td>
+                    <td th:text="${sale.totalRevenue}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 🏅 Best-Selling Menu Items Section -->
+<div class="stats-box" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 20px; background-color: #fdfdfd; border-radius: 12px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);">
+
+    <!-- 📋 Top Items Table -->
+    <div style="flex: 1;">
+        <h2 style="margin-bottom: 16px;">🏅 Best-Selling Dishes</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f0f0f0;">
+                    <th style="text-align: left; padding: 10px;">Rank</th>
+                    <th style="text-align: left; padding: 10px;">Item Name</th>
+                    <th style="text-align: right; padding: 10px;">Units Sold</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item, iterStat : ${topItems}"
+                    th:class="${iterStat.index == 0} ? 'highlight-row' : ''">
+                    <td style="padding: 10px;">
+                        <span th:if="${iterStat.index == 0}">🥇</span>
+                        <span th:if="${iterStat.index == 1}">🥈</span>
+                        <span th:if="${iterStat.index == 2}">🥉</span>
+                    </td>
+                    <td style="padding: 10px;" th:text="${item.itemName}">Dish Name</td>
+                    <td style="padding: 10px; text-align: right;" th:text="${item.quantitySold}">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 📊 Pie Chart for Top Items -->
+    <div style="flex: 1;">
+        <h2 style="text-align: center;">📊 Distribution</h2>
+        <canvas id="topItemsPieChart" width="300" height="300"></canvas>
+    </div>
+</div>
+
+<!-- 📈 Performance Overview (Bar Chart) -->
+<div class="stats-box" style="margin-top: 30px; padding: 20px; background-color: #fdfdfd; border-radius: 12px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);">
+    <h2 style="margin-bottom: 16px;">📈 Sales Breakdown (Bar Chart)</h2>
+    <canvas id="topItemsBarChart"></canvas>
+</div>
+
+<!-- Optional Highlight for #1 -->
+<style>
+    .highlight-row {
+        background-color: #e8f0fe;
+        font-weight: bold;
+    }
+</style>
+
+
+
+<!-- ✅ CHART DATA & SCRIPT -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+let itemNames = /*[[${itemNames}]]*/ [];
+let itemCounts = /*[[${itemCounts}]]*/ [];
+/*]]>*/
+
+
+    new Chart(document.getElementById('topItemsChart'), {
+        type: 'bar',
+        data: {
+            labels: itemNames,
+            datasets: [{
+                label: 'Items Sold',
+                data: itemCounts,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, precision: 0 } }
+        }
+    });
+
+    new Chart(document.getElementById('topItemsBarChart'), {
+        type: 'bar',
+        data: {
+            labels: itemNames,
+            datasets: [{
+                label: 'Items Sold',
+                data: itemCounts,
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+                borderColor: '#333',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, precision: 0 } }
+        }
+    });
+
+    new Chart(document.getElementById('topItemsPieChart'), {
+        type: 'pie',
+        data: {
+            labels: itemNames,
+            datasets: [{
+                data: itemCounts,
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+                borderColor: '#fff',
+                borderWidth: 1
+            }]
+        },
+        options: { responsive: true }
+    });
+</script>
+
+<!-- ✅ Tab Switching Script -->
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.sales-tab').forEach(tab => tab.style.display = 'none');
+        document.getElementById(tabId).style.display = 'block';
+
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = [...document.querySelectorAll('.tab-button')].find(btn => btn.innerText.toLowerCase().includes(tabId));
+        if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    window.onload = () => showTab('weekly');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Your Cart</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        th { background: #f0f0f0; }
+        .remove-btn { background: red; color: white; padding: 5px 10px; border: none; border-radius: 5px; text-decoration: none; }
+        .checkout-btn { background: green; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
+        .empty-msg { color: gray; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h2>🛒 Your Cart</h2>
+
+    <!-- ✅ Show checkout form only if cart is not empty -->
+    <div th:if="${not #lists.isEmpty(cartItems)}">
+        <form th:action="@{/cart/checkout}" method="post">
+            <label>Name: <input type="text" name="customerName" required/></label>
+            <button type="submit" class="checkout-btn">Place Order</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price (₹)</th>
+                    <th>Quantity</th>
+                    <th>Subtotal (₹)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${cartItems}">
+                    <td th:text="${item.menuItem.name}">Item Name</td>
+                    <td th:text="${item.menuItem.price}">0.0</td>
+                    <td th:text="${item.quantity}">0</td>
+                    <td th:text="${item.subtotal}">0.0</td>
+                    <td>
+                        <a th:href="@{/cart/remove/{id}(id=${item.menuItem.id})}" class="remove-btn"
+                           onclick="return confirm('Remove this item?')">Remove</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Total: ₹<span th:text="${totalPrice}">0.0</span></h3>
+    </div>
+
+    <!-- ✅ Show this if cart is empty -->
+    <div th:if="${#lists.isEmpty(cartItems)}">
+        <p class="empty-msg">Your cart is empty.</p>
+    </div>
+
+    <br/>
+    <a href="/menu">← Back to Menu</a>
+</body>
+</html>

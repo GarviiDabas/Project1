@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Orders</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+        h1 {
+            color: #333;
+        }
+        .order-card {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #2196F3;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .order-card h3 {
+            margin-top: 0;
+        }
+        ul {
+            list-style-type: circle;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>📋 All Orders</h1>
+    <a th:href="@{/admin/dashboard}" style="background-color:#4CAF50; color:white; padding:10px 20px; border-radius:6px; text-decoration:none; font-weight:bold;">
+        📊 Go to Admin Dashboard
+    </a>
+</div>
+
+
+<div th:if="${#lists.isEmpty(orders)}">
+    <p>No orders have been placed yet.</p>
+</div>
+
+<div th:each="order : ${orders}" class="order-card">
+    <h3 th:text="'Order #' + ${order.id} + ' by ' + ${order.customerName}"></h3>
+    <p><strong>Time:</strong> <span th:text="${order.timestamp}">timestamp</span></p>
+    <p><strong>Total Price:</strong> ₹<span th:text="${order.totalPrice}">0.0</span></p>
+    <p><strong>Items:</strong></p>
+    <ul>
+        <li th:each="item : ${order.menuItems}" th:text="${item.name} + ' - ₹' + ${item.price}">Pizza - ₹199</li>
+    </ul>
+</div>
+
+<a href="/menu">← Back to Menu</a>
+
+</body>
+</html>
